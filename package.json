@@ -1,0 +1,35 @@
+{
+  "name": "onetimelink-ui",
+  "version": "0.1.0",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.0.0",
+    "classnames": "^2.2.6",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1",
+    "moment": "^2.22.2",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-dom": "^16.3.2",
+    "react-dropzone": "^4.2.9",
+    "react-dropzone-component": "^3.2.0",
+    "react-intl": "^2.4.0",
+    "react-loading": "^2.0.0",
+    "react-modal": "^3.4.1",
+    "react-native-uuid": "^1.4.9",
+    "react-numeric-input": "^2.2.3",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4",
+    "react-tag-input": "^5.0.2",
+    "react-tooltip": "^3.4.0",
+    "resumablejs": "^1.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
