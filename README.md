@@ -12,7 +12,6 @@ A User Interface for the JTL-OneTimeLink API.
 
 * Install dependencies using `yarn`
 * Configure the application using the config file located at *src/config/config.production.json*
-* Copy *src/config/config.production.json* to *src/config/config.json* (Remember to make backups!)
 * Build the application using `yarn build`
 * The *build/* directory can now be served with a webserver of your choice
 
