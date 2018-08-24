@@ -143,8 +143,7 @@ export default class App extends Component {
         formData['text'] = text;
         formData['amount'] = amount;
         formData['protected'] = isProtected;
-
-        apiEndpoint += this.transformTagsForRequest(tags);
+        formData['tags'] = this.transformTagsForRequest(tags);
 
         axios({
             method: httpMethod,
@@ -166,19 +165,22 @@ export default class App extends Component {
     transformTagsForRequest(tags) {
         let tagsToSend = [];
         tags.map(f => tagsToSend.push(f.text));
-        return '&tags=' + encodeURIComponent(JSON.stringify(tagsToSend));
+        return tagsToSend;
     }
 
     handleGuestLink(tags, amount, callback, isProtected = false) {
         let apiEndpoint =
             this.props.config.api
             + '/create/guest'
-            + this.getSession()
-            + this.transformTagsForRequest(tags)
-            + '&amount=' + amount
-            + '&protected=' + isProtected;
+            + this.getSession();
 
-        axios.post(apiEndpoint)
+        const formData = {};
+
+        formData['amount'] = amount;
+        formData['tags'] = this.transformTagsForRequest(tags);
+        formData['protected'] = isProtected;
+
+        axios.post(apiEndpoint, formData)
             .then((resp) => {
                 callback(resp.data);
             })
