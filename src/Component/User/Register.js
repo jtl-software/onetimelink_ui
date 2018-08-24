@@ -226,7 +226,7 @@ export default class Register extends Component {
                         </div>
                     )}
 
-                    {this.state.password.length < 8 && (
+                    {this.state.password.length < 8 && this.state.password.length > 0 && (
                         <div className="text-danger">
                             <FormattedMessage
                                 id="app.Register.PasswordTooShort"
