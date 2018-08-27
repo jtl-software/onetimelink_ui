@@ -26,6 +26,7 @@ export default class App extends Component {
             session: new Session('otl_ses_v1'),
             sessionActive: false,
             showModal: false,
+            uploadCallback: this.handleTextUpload,
             isGuestLinkResponse: false,
             isModeCreate: false,
             guestLinkUrl: null,
@@ -137,14 +138,13 @@ export default class App extends Component {
         const formData = {};
 
         files.forEach((file, i) => {
-            formData[`file${i}`] = file.file.uniqueIdentifier;
+            formData[`file${i}`] = file.getOpt('query').uploadToken;
         });
 
         formData['text'] = text;
         formData['amount'] = amount;
         formData['protected'] = isProtected;
-
-        apiEndpoint += this.transformTagsForRequest(tags);
+        formData['tags'] = this.transformTagsForRequest(tags);
 
         axios({
             method: httpMethod,
@@ -166,19 +166,22 @@ export default class App extends Component {
     transformTagsForRequest(tags) {
         let tagsToSend = [];
         tags.map(f => tagsToSend.push(f.text));
-        return '&tags=' + encodeURIComponent(JSON.stringify(tagsToSend));
+        return tagsToSend;
     }
 
     handleGuestLink(tags, amount, callback, isProtected = false) {
         let apiEndpoint =
             this.props.config.api
             + '/create/guest'
-            + this.getSession()
-            + this.transformTagsForRequest(tags)
-            + '&amount=' + amount
-            + '&protected=' + isProtected;
+            + this.getSession();
 
-        axios.post(apiEndpoint)
+        const formData = {};
+
+        formData['amount'] = amount;
+        formData['tags'] = this.transformTagsForRequest(tags);
+        formData['protected'] = isProtected;
+
+        axios.post(apiEndpoint, formData)
             .then((resp) => {
                 callback(resp.data);
             })

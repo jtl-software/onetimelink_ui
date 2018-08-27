@@ -7,6 +7,9 @@ import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 import NumericInput from 'react-numeric-input';
 import {Link} from 'react-router-dom';
+import axios from "axios";
+import filesize from 'filesize';
+import ReactLoading from "react-loading";
 
 export default class CreateLink extends Component {
 
@@ -38,6 +41,10 @@ export default class CreateLink extends Component {
             disableSubmit: true,
             textData: '',
             isLinkProtected: false,
+            chunkSize: null,
+            maxFileSize: null,
+            quota: 0,
+            usedQuota: 0
         };
 
         this.handleDelete = this.handleDelete.bind(this);
@@ -54,6 +61,10 @@ export default class CreateLink extends Component {
         }
 
         return null;
+    }
+
+    componentDidMount(){
+       this.getUploadLimits();
     }
 
     handleDelete(i) {
@@ -106,6 +117,16 @@ export default class CreateLink extends Component {
                 this.state.isLinkProtected
             );
         }
+    }
+
+    getUploadLimits(){
+        axios.get(this.props.baseURL + '/upload-limits' + this.props.getSessionToken()).then((resp) => {
+            if(resp.status === 200 ){
+                this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize, resp.data.quota || null, resp.data.usedQuota || null);
+            }else{
+                console.log('Failed to request upload limits');
+            }
+        });
     }
 
     displayResult(data) {
@@ -195,78 +216,144 @@ export default class CreateLink extends Component {
         });
     }
 
+    setUploadLimits(chunkSize, maxFileSize, quota, usedQuota){
+        this.setState({
+            chunkSize: chunkSize,
+            maxFileSize: maxFileSize,
+            quota: quota,
+            usedQuota: usedQuota
+        });
+    }
+
+    prepareUpload(guestLinkHash, file){
+        axios.post(this.props.baseURL+ '/request-upload' + this.props.getSessionToken()).then((resp) => {
+            if(resp.status === 200 ){
+                file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
+                file.resumableObj.upload();
+                this.setState({
+                    isUploading: true,
+                    disableSubmit: true,
+                });
+            }else{
+                console.log('Failed to request token');
+            }
+        });
+    }
+
+    deleteUpload(file){
+        axios.post(this.props.baseURL+ '/delete-upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken()).then((resp) => {
+            this.getUploadLimits();
+        });
+    }
+
+    getMaxFileSize(){
+        if(this.state.quota !== null){
+            let freeSpace = this.state.quota - this.state.usedQuota;
+            if(freeSpace < this.state.maxFileSize){
+                return freeSpace;
+            }
+        }
+        return this.state.maxFileSize;
+    }
+
     render() {
         let guesttext = "";
-
-        let uploadComponent = (
-            <div>
-                <div className="text-input col-8 left-1">
-                    <h3><FormattedMessage id="app.CreateLink.Label.UploadTitel"/></h3>
-                    <p><FormattedMessage id="app.CreateLink.Explanation.Upload"/></p>
-                    <textarea
-                        value={this.state.textData}
-                        onChange={this.onTextDataChange.bind(this)}
-                        placeholder={this.context.intl.formatMessage({id:'app.CreateLink.Label.TextZone'})}
-                    />
-                </div>
-                <div className="drop col-8 left-1">
-                    <div className="dashed">
-                        <ResumableDropzone
-                            targetURL={`${this.props.baseURL}/prepare_create${this.props.getSessionToken()}`}
-                            maxFileSize={1024 ** 3 * 100 /* 100 GB */}
-                            chunkSize={1024 ** 2 * 15 /* 15 MB */}
-                            maxFiles={1}
-                            onFileError={(file, msg) => {
-                                setTimeout(() => {
-                                    file.retry();
-                                }, 5000);
-                            }}
-                            onFileSuccess={(file, message) => {
-                                this.setState({
-                                    isUploading: false,
-                                    disableSubmit: false,
-                                });
-                            }}
-                            onFileAdded={(file, event) => {
-                                file.resumableObj.upload();
-                                this.setState({
-                                    isUploading: true,
-                                    disableSubmit: true,
-                                });
-                            }}
-                            onMaxFileSizeErrorCallback={(file) => {
-                                this.setState({
-                                    fileTooLarge: true,
-                                });
-                            }}
-                            onFileRemoved={(removedFile, filesLeft) => {
-                                this.removeFile(removedFile, filesLeft);
-                            }}
-                            generateUniqueIdentifier={(file, event) => {
-                                const now = Math.round((new Date()).getTime() / 1000);
-                                return file.name + file.size + now;
-                            }}
-                            getFileListCallback={fileList => {
-                                this.setFileList(fileList);
-                            }}
-                        />
-                        {this.state.fileTooLarge && (
-                            <div className="text-danger">
-                                <FormattedMessage
-                                    id="app.Upload.FileTooLarge"
-                                />
-                            </div>
-                        )}
-                    </div>
-                    <div className="one-file-hint">
-                        <FormattedMessage
-                            id="app.Upload.OneFileHint"
-                        />
-                    </div>
+        let uploadComponent = ( <div className="container">
+            <div className="row mt-4">
+                <div className="col-2 offset-5">
+                    <ReactLoading type="spinningBubbles" color="#26292c" height={128} width={128} />
                 </div>
             </div>
-        );
-
+        </div>);
+        if(this.state.chunkSize && this.state.maxFileSize) {
+            uploadComponent = (
+                <div>
+                    <div className="text-input col-8 left-1">
+                        <h3><FormattedMessage id="app.CreateLink.Label.UploadTitel"/></h3>
+                        <p><FormattedMessage id="app.CreateLink.Explanation.Upload"/></p>
+                        <textarea
+                            value={this.state.textData}
+                            onChange={this.onTextDataChange.bind(this)}
+                            placeholder={this.context.intl.formatMessage({id: 'app.CreateLink.Label.TextZone'})}
+                        />
+                    </div>
+                    <div className="drop col-8 left-1">
+                        <div className="dashed">
+                            <ResumableDropzone
+                                targetURL={`${this.props.baseURL}/upload`+ this.props.getSessionToken()}
+                                maxFileSize={this.getMaxFileSize()}
+                                chunkSize={this.state.chunkSize}
+                                maxFiles={1}
+                                onFileError={(file, msg) => {
+                                    setTimeout(() => {
+                                        file.retry();
+                                    }, 5000);
+                                }}
+                                onFileSuccess={(file, message) => {
+                                    this.setState({
+                                        isUploading: false,
+                                        disableSubmit: false,
+                                    });
+                                    this.getUploadLimits();
+                                }}
+                                onFileAdded={(file, event) => {
+                                    this.prepareUpload(this.props.guestLinkHash, file);
+                                    this.setState({
+                                        isUploading: true,
+                                        disableSubmit: true,
+                                    });
+                                }}
+                                onMaxFileSizeErrorCallback={(file) => {
+                                    this.setState({
+                                        fileTooLarge: true,
+                                    });
+                                }}
+                                onFileRemoved={(removedFile, filesLeft) => {
+                                    this.deleteUpload(removedFile);
+                                    this.removeFile(removedFile, filesLeft);
+                                }}
+                                getFileListCallback={fileList => {
+                                    this.setFileList(fileList);
+                                }}
+                            />
+                            {this.state.fileTooLarge && (
+                                <div className="text-danger">
+                                    <FormattedMessage
+                                        id="app.Upload.FileTooLarge"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <div className="one-file-hint">
+                            <FormattedMessage
+                                id="app.Upload.OneFileHint"
+                            />
+                        </div>
+                        <div className="one-file-hint">
+                            <FormattedMessage
+                                id="app.Upload.FileSize"
+                            />
+                            {filesize(this.state.maxFileSize)}
+                        </div>
+                        {(this.state.quota !== 0 && this.state.quota !== null) && (
+                            <div className="one-file-hint">
+                            <FormattedMessage
+                            id="app.Upload.Quota"
+                            />
+                            {filesize(this.state.usedQuota)}
+                            <FormattedMessage
+                            id="app.Upload.QuotaOf"
+                            />
+                            {filesize(this.state.quota)}
+                            <FormattedMessage
+                            id="app.Upload.QuotaUsed"
+                            />
+                            </div>)
+                        }
+                    </div>
+                </div>
+            );
+        }
         if (this.state.inputType === 'guest') {
             uploadComponent = <div/>;
             guesttext = (<div className="explain">

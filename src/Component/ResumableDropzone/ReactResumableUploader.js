@@ -19,6 +19,8 @@ export default class ReactResumableUploader extends Component {
         generateUniqueIdentifier: PropTypes.func,
         onFileRemoved: PropTypes.func,
         getFileListCallback: PropTypes.func,
+        uploadToken: PropTypes.string,
+
     };
 
     static defaultProps = {
@@ -55,7 +57,10 @@ export default class ReactResumableUploader extends Component {
                 this.callFnIfPropSet(this.props.onMaxFileSizeErrorCallback, file, errorCount);
             },
             generateUniqueIdentifier: this.props.generateUniqueIdentifier,
-            testChunks: false
+            testChunks: false,
+            query: {
+                uploadToken: this.props.uploadToken
+            }
         });
 
         resumable.assignBrowse(this.browseBtnRef.current);
