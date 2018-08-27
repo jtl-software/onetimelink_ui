@@ -29,13 +29,13 @@ export default class ReadLinkLink extends React.Component {
             let filesize = file.size / 1024;
             let suffix = 'KB';
 
-            if (filesize / 1024**3 >= 1) {
-                filesize /= 1024**3;
+            if (filesize / 1024**2 >= 1) {
+                filesize /= 1024**2;
                 suffix = 'GB';
             }
 
-            if (filesize / 1024**2 >= 1) {
-                filesize /= 1024**2;
+            if (filesize / 1024 >= 1) {
+                filesize /= 1024;
                 suffix = 'MB';
             }
 
