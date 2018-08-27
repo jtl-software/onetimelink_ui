@@ -26,6 +26,18 @@ export default class ReadLinkLink extends React.Component {
             const file = files[key];
             let filename = file.name;
             let i18nID = 'Filename';
+            let filesize = file.size / 1024;
+            let suffix = 'KB';
+
+            if (filesize / 1024**3 >= 1) {
+                filesize /= 1024**3;
+                suffix = 'GB';
+            }
+
+            if (filesize / 1024**2 >= 1) {
+                filesize /= 1024**2;
+                suffix = 'MB';
+            }
 
             if (filename === '') {
                 filename = 'Text Input';
@@ -35,7 +47,8 @@ export default class ReadLinkLink extends React.Component {
             return (
                 <div key={key}>
                     <FormattedMessage id={`app.ReadLink.Label.${i18nID}`}/>: {filename},&nbsp;
-                    <FormattedMessage id="app.ReadLink.Label.ContentType"/>: {file.contentType}
+                    <FormattedMessage id="app.ReadLink.Label.ContentType"/>: {file.contentType},&nbsp;
+                    <FormattedMessage id="app.ReadLink.Label.Size"/>: {filesize.toFixed(2)} {suffix}
                 </div>
             );
         });
