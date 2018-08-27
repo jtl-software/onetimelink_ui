@@ -120,7 +120,7 @@ export default class CreateLink extends Component {
     }
 
     getUploadLimits(){
-        axios.get(this.props.baseURL + '/upload-limits' + this.props.getSessionToken()).then((resp) => {
+        axios.get(this.props.baseURL + '/upload_limits' + this.props.getSessionToken()).then((resp) => {
             if(resp.status === 200 ){
                 this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize, resp.data.quota || null, resp.data.usedQuota || null);
             }else{
@@ -226,7 +226,7 @@ export default class CreateLink extends Component {
     }
 
     prepareUpload(guestLinkHash, file){
-        axios.post(this.props.baseURL+ '/request-upload' + this.props.getSessionToken()).then((resp) => {
+        axios.post(this.props.baseURL+ '/request_upload' + this.props.getSessionToken()).then((resp) => {
             if(resp.status === 200 ){
                 file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
                 file.resumableObj.upload();
@@ -241,7 +241,7 @@ export default class CreateLink extends Component {
     }
 
     deleteUpload(file){
-        axios.post(this.props.baseURL+ '/delete-upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken()).then((resp) => {
+        axios.post(this.props.baseURL+ '/delete_upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken()).then((resp) => {
             this.getUploadLimits();
         });
     }

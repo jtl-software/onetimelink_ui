@@ -40,7 +40,7 @@ export default class GuestLink extends React.Component {
     }
 
     componentDidMount(){
-        axios.get(this.props.api + '/upload-limits/'+ this.props.guestLinkHash).then((resp) => {
+        axios.get(this.props.api + '/upload_limits/'+ this.props.guestLinkHash).then((resp) => {
             if(resp.status === 200 ){
                 this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize);
             }else{
@@ -122,7 +122,7 @@ export default class GuestLink extends React.Component {
     }
 
     prepareUpload(guestLinkHash, file){
-        axios.post(this.props.api + '/request-upload/' + guestLinkHash).then((resp) => {
+        axios.post(this.props.api + '/request_upload/' + guestLinkHash).then((resp) => {
             if(resp.status === 200 ){
                 file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
                 file.resumableObj.upload();
