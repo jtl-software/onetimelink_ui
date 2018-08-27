@@ -26,7 +26,7 @@ export default class ReadLinkLink extends React.Component {
             const file = files[key];
             let filename = file.name;
             let i18nID = 'Filename';
-            let filesize = file.size;
+            let filesize = file.size / 1024;
             let suffix = 'KB';
 
             if (filesize / 1024**3 >= 1) {
@@ -48,7 +48,7 @@ export default class ReadLinkLink extends React.Component {
                 <div key={key}>
                     <FormattedMessage id={`app.ReadLink.Label.${i18nID}`}/>: {filename},&nbsp;
                     <FormattedMessage id="app.ReadLink.Label.ContentType"/>: {file.contentType},&nbsp;
-                    <FormattedMessage id="app.ReadLink.Label.Size"/>: {filesize} {suffix}
+                    <FormattedMessage id="app.ReadLink.Label.Size"/>: {filesize.toFixed(2)} {suffix}
                 </div>
             );
         });
