@@ -19,7 +19,6 @@ export default class ReactResumableUploader extends Component {
         generateUniqueIdentifier: PropTypes.func,
         onFileRemoved: PropTypes.func,
         getFileListCallback: PropTypes.func,
-        uploadToken: PropTypes.string,
 
     };
 

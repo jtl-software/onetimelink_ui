@@ -83,7 +83,7 @@
         "app.Upload.FileSize": "The maximum file size is: ",
         "app.Upload.Quota": "You have already used ",
         "app.Upload.QuotaOf": " of ",
-        "app.Upload.QuotaUsed": "",
+        "app.Upload.QuotaUsed": " ",
         "app.PasswordReset.NewPassword": "New password",
         "app.PasswordReset.Submit": "Reset password",
         "app.PasswordReset.Forgot": "Forgot password?",

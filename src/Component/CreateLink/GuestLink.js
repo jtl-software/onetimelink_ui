@@ -101,6 +101,12 @@ export default class GuestLink extends React.Component {
         }
     }
 
+    deleteUpload(file){
+        axios.post(this.props.api + '/delete_upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken()).then((resp) => {
+            this.getUploadLimits();
+        });
+    }
+
     onTextDataChange(e) {
         this.setState({
             textData: e.target.value,
@@ -197,6 +203,7 @@ export default class GuestLink extends React.Component {
                                     });
                                 }}
                                 onFileRemoved={(removedFile, filesLeft) => {
+                                    this.deleteUpload(removedFile);
                                     this.removeFile(removedFile, filesLeft);
                                 }}
                                 generateUniqueIdentifier={(file, event) => {
