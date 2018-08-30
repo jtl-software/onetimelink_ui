@@ -26,6 +26,7 @@ export default class App extends Component {
             session: new Session('otl_ses_v1'),
             sessionActive: false,
             showModal: false,
+            uploadCallback: this.handleTextUpload,
             isGuestLinkResponse: false,
             isModeCreate: false,
             guestLinkUrl: null,
@@ -137,7 +138,7 @@ export default class App extends Component {
         const formData = {};
 
         files.forEach((file, i) => {
-            formData[`file${i}`] = file.file.uniqueIdentifier;
+            formData[`file${i}`] = file.getOpt('query').uploadToken;
         });
 
         formData['text'] = text;
