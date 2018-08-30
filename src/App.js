@@ -97,8 +97,10 @@ export default class App extends Component {
         axios.get(apiEndpoint)
             .then((resp) => {
                 this.handleSessionResult(resp.data);
+            })
+            .then(() => {
+                this.updateSessionActiveFlag();
             });
-        this.updateSessionActiveFlag();
     };
 
     updateSessionActiveFlag() {
