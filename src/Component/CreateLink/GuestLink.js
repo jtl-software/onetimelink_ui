@@ -196,6 +196,9 @@ export default class GuestLink extends React.Component {
                                 }}
                                 onFileAdded={(file, event) => {
                                     this.prepareUpload(this.props.guestLinkHash, file);
+                                    this.setState({
+                                        fileTooLarge: false,
+                                    });
                                 }}
                                 onMaxFileSizeErrorCallback={(file) => {
                                     this.setState({

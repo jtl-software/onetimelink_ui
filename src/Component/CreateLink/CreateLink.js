@@ -301,6 +301,7 @@ export default class CreateLink extends Component {
                                     this.setState({
                                         isUploading: true,
                                         disableSubmit: true,
+                                        fileTooLarge: false,
                                     });
                                 }}
                                 onMaxFileSizeErrorCallback={(file) => {
