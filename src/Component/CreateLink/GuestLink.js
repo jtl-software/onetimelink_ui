@@ -40,13 +40,7 @@ export default class GuestLink extends React.Component {
     }
 
     componentDidMount(){
-        axios.get(this.props.api + '/upload_limits/'+ this.props.guestLinkHash).then((resp) => {
-            if(resp.status === 200 ){
-                this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize);
-            }else{
-                console.log('Failed to request upload limits');
-            }
-        });
+       this.getUploadLimits();
     }
 
     componentWillMount() {
@@ -67,6 +61,10 @@ export default class GuestLink extends React.Component {
                 if (this.state.isAlive === false) {
                     this.setState({guestlinkfilled: true,});
                 }
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
+                console.log(err);
             });
     }
 
@@ -101,10 +99,28 @@ export default class GuestLink extends React.Component {
         }
     }
 
+    getUploadLimits(){
+        axios.get(this.props.api + '/upload_limits/'+ this.props.guestLinkHash)
+            .then((resp) => {
+                if(resp.status === 200 ){
+                    this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize);
+                }
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
+                console.log(err);
+            });
+    }
+
     deleteUpload(file){
-        axios.post(this.props.api + '/delete_upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken()).then((resp) => {
-            this.getUploadLimits();
-        });
+        axios.post(this.props.api + '/delete_upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken())
+            .then((resp) => {
+                this.getUploadLimits();
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.Upload.DeleteError"/>));
+                console.log(err);
+            });
     }
 
     onTextDataChange(e) {
@@ -128,18 +144,21 @@ export default class GuestLink extends React.Component {
     }
 
     prepareUpload(guestLinkHash, file){
-        axios.post(this.props.api + '/request_upload/' + guestLinkHash).then((resp) => {
-            if(resp.status === 200 ){
-                file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
-                file.resumableObj.upload();
-                this.setState({
-                    isUploading: true,
-                    disableSubmit: true,
-                });
-            }else{
-                console.log('Failed to request token');
-            }
-        });
+        axios.post(this.props.api + '/request_upload/' + guestLinkHash)
+            .then((resp) => {
+                if(resp.status === 200 ){
+                    file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
+                    file.resumableObj.upload();
+                    this.setState({
+                        isUploading: true,
+                        disableSubmit: true,
+                    });
+                }
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.Upload.Guest.TokenError"/>));
+                console.log(err);
+            });
     }
 
     render() {

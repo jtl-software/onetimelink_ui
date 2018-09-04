@@ -1,5 +1,6 @@
 {
     "en": {
+        "app.Error": "Error",
         "app.Session.Logout": "Logout",
         "app.CreateLink.Label.Create": "Create link",
         "app.CreateLink.Label.Send": "Send data",
@@ -18,6 +19,7 @@
         "app.CreateLink.Amount": "How many links do you want to create?",
         "app.CreateLink.Protected": "Protect link. This requires users to be logged in in order to see your link.",
         "app.CreateLink.EmptyError": "You may not create empty links!",
+        "app.CreateLink.ApiError": "Error while communicating with the API!",
         "app.History.Action.ShowHide": "History",
         "app.History.Header": "History: Created links",
         "app.History.Label.HideUsed": "Hide used JTL OneTimeLinks  ({amount} link(s) not displayed)",
@@ -85,6 +87,9 @@
         "app.Upload.Quota": "You have already used ",
         "app.Upload.QuotaOf": " of ",
         "app.Upload.QuotaUsed": " ",
+        "app.Upload.TokenError": "Error while requesting upload token!",
+        "app.Upload.Guest.TokenError": "Error while requesting upload token! Maybe another upload is running!",
+        "app.Upload.DeleteError": "Error while deleting upload!",
         "app.PasswordReset.NewPassword": "New password",
         "app.PasswordReset.Submit": "Reset password",
         "app.PasswordReset.Forgot": "Forgot password?",
@@ -99,6 +104,7 @@
         "app.Guest.Introduction.4": "As soon as your communication partner retrieves the stored data, it will be removed from the server and you will receive a confirmation by email."
     },
     "de": {
+        "app.Error": "Fehler",
         "app.Session.Logout": "Abmelden",
         "app.CreateLink.Label.Create": "Link erstellen",
         "app.CreateLink.Label.Send": "Daten absenden",
@@ -117,6 +123,7 @@
         "app.CreateLink.Amount": "Wie viele Links möchten Sie erstellen?",
         "app.CreateLink.Protected": "Link schützen. Benutzer müssen angemeldet sein, um einen geschützten Link sehen zu können.",
         "app.CreateLink.EmptyError": "Sie dürfen keine leeren Links erstellen!",
+        "app.CreateLink.ApiError": "Fehler bei der Kommunikation mit der API!",
         "app.History.Action.ShowHide": "Verlauf",
         "app.History.Header": "Verlauf: Erstellter Links",
         "app.History.Label.HideUsed": "Genutzte JTL-OneTimeLinks ausblenden ({amount} Link(s) ausgeblendet)",
@@ -184,6 +191,9 @@
         "app.Upload.QuotaOf": " von ",
         "app.Upload.QuotaUsed": " belegt.",
         "app.Upload.FileTooLarge": "Diese Datei ist zu groß.",
+        "app.Upload.TokenError": "Fehler beim Anfordern des Upload Token!",
+        "app.Upload.Guest.TokenError": "Fehler beim Anfordern des Upload Token! Eventuell läuft bereits ein Upload!",
+        "app.Upload.DeleteError": "Fehler beim Löschen des Uploads!",
         "app.PasswordReset.NewPassword": "Neues Passwort",
         "app.PasswordReset.Submit": "Passwort zurücksetzen",
         "app.PasswordReset.Forgot": "Passwort vergessen?",
