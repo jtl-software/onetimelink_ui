@@ -44,7 +44,7 @@ export default class CreateLink extends Component {
             chunkSize: null,
             maxFileSize: null,
             quota: 0,
-            usedQuota: 0
+            usedQuota: 0,
         };
 
         this.handleDelete = this.handleDelete.bind(this);
@@ -120,13 +120,16 @@ export default class CreateLink extends Component {
     }
 
     getUploadLimits(){
-        axios.get(this.props.baseURL + '/upload_limits' + this.props.getSessionToken()).then((resp) => {
-            if(resp.status === 200 ){
-                this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize, resp.data.quota || null, resp.data.usedQuota || null);
-            }else{
-                console.log('Failed to request upload limits');
-            }
-        });
+        axios.get(this.props.baseURL + '/upload_limits' + this.props.getSessionToken())
+            .then((resp) => {
+                if(resp.status === 200 ){
+                    this.setUploadLimits(resp.data.chunkSize, resp.data.maxFileSize, resp.data.quota || null, resp.data.usedQuota || null);
+                }
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
+                console.log(err);
+            });
     }
 
     displayResult(data) {
@@ -226,24 +229,33 @@ export default class CreateLink extends Component {
     }
 
     prepareUpload(guestLinkHash, file){
-        axios.post(this.props.baseURL+ '/request_upload' + this.props.getSessionToken()).then((resp) => {
-            if(resp.status === 200 ){
-                file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
-                file.resumableObj.upload();
-                this.setState({
-                    isUploading: true,
-                    disableSubmit: true,
-                });
-            }else{
-                console.log('Failed to request token');
-            }
-        });
+        axios.post(this.props.baseURL+ '/request_upload' + this.props.getSessionToken())
+            .then((resp) => {
+                if(resp.status === 200 ){
+                    file.resumableObj.opts.query.uploadToken = resp.data.uploadToken;
+                    file.resumableObj.upload();
+                    this.setState({
+                        isUploading: true,
+                        disableSubmit: true,
+                    });
+                }
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.Upload.TokenError"/>));
+                console.log(err);
+            });
     }
 
     deleteUpload(file){
-        axios.post(this.props.baseURL+ '/delete_upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken()).then((resp) => {
-            this.getUploadLimits();
-        });
+        axios.post(this.props.baseURL+ '/delete_upload/'+ file.resumableObj.opts.query.uploadToken + this.props.getSessionToken())
+            .then(() => {
+                this.getUploadLimits();
+            })
+            .catch((err) => {
+                this.props.showError((<FormattedMessage id="app.Upload.DeleteError"/>));
+                console.log(err);
+            });
+
     }
 
     getMaxFileSize(){

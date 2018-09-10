@@ -15,6 +15,8 @@ import Activate from './Component/User/Activate';
 import ChangePassword from './Component/User/ChangePassword';
 import ResetPasswordRequest from './Component/User/ResetPasswordRequest';
 import ResetPasswordAction from './Component/User/ResetPasswordAction';
+import Modal from "react-bootstrap4-modal";
+import {FormattedMessage} from "react-intl";
 
 export default class App extends Component {
 
@@ -36,6 +38,11 @@ export default class App extends Component {
                 tagSuggestions: [],
                 links: [],
             },
+            error: {
+                shown: false,
+                title: null,
+                text: null,
+            },
         };
     }
 
@@ -56,6 +63,7 @@ export default class App extends Component {
 
         this.checkSession(true);
         this.intervalId = setInterval(this.checkSession.bind(this), 10000);
+        this.hideError = this.hideError.bind(this);
     }
 
     componentWillUnmount() {
@@ -158,9 +166,9 @@ export default class App extends Component {
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    console.log('HTTP Error 401 Unauthorized.');
+                    this.showError('HTTP Error 401 Unauthorized.');
                 } else {
-                    console.log('Uncaught Error.\n' + err.response.statusText);
+                    this.showError('Uncaught Error.\n' + err.response.statusText);
                 }
             });
     }
@@ -189,9 +197,9 @@ export default class App extends Component {
             })
             .catch((err) => {
                 if (err.response.status === 401) {
-                    console.log('HTTP Error 401 Unauthorized.');
+                    this.showError('HTTP Error 401 Unauthorized.');
                 } else {
-                    console.log('Uncaught Error.\n' + err.response.statusText);
+                    this.showError('Uncaught Error.\n' + err.response.statusText);
                 }
             });
     }
@@ -201,9 +209,40 @@ export default class App extends Component {
             this.state.session.getSession();
     }
 
+    hideError(){
+        this.setState({
+            error: {
+                shown: false,
+            },
+        });
+    }
+
+    showError(text){
+        this.setState({
+            error: {
+                shown: true,
+                title: (<FormattedMessage id="app.Error"/>),
+                text: text,
+            },
+        });
+    }
+
     render() {
         return (
             <div>
+                <Modal visible={this.state.error.shown}>
+                    <div className="modal-header">
+                        <h5 className="modal-title">{this.state.error.title}</h5>
+                    </div>
+                    <div className="modal-body">
+                        <p>{this.state.error.text}</p>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" onClick={this.hideError}>
+                            OK
+                        </button>
+                    </div>
+                </Modal>
                 <Header
                     session={this.state.session}
                     updateSessionCallback={this.updateSessionActiveFlag.bind(this)}
@@ -258,6 +297,7 @@ export default class App extends Component {
                                     handleGuestLink={this.handleGuestLink.bind(this)}
                                     baseURL={this.props.config.api}
                                     getSessionToken={this.getSession.bind(this)}
+                                    showError={this.showError.bind(this)}
                                 />
                             )}
                         />
@@ -272,6 +312,7 @@ export default class App extends Component {
                                     guestLinkHash={props.match.params.hash}
                                     handleUpload={this.handleUpload.bind(this)}
                                     getSessionToken={this.getSession.bind(this)}
+                                    showError={this.showError.bind(this)}
                                 />
                             )}
                         />
