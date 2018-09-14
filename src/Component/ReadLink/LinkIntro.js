@@ -156,7 +156,7 @@ export default class LinkIntro extends Component {
                     <div className="ReadLink">
                         <div className="line">
                             <div className="white">
-                                <i className="fa fa-microphone" />
+                                <i className="fa fa-lock" />
                             </div>
                         </div>
                         <div className="inner">
