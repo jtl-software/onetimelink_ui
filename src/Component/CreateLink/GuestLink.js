@@ -63,8 +63,12 @@ export default class GuestLink extends React.Component {
                 }
             })
             .catch((err) => {
-                this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
-                console.log(err);
+                if (err.response && err.response.status === 403) {
+                    console.log('Logout after invalid session');
+                } else {
+                    this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
+                    console.log(err);
+                }
             });
     }
 
@@ -107,8 +111,12 @@ export default class GuestLink extends React.Component {
                 }
             })
             .catch((err) => {
-                this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
-                console.log(err);
+                if (err.response && err.response.status === 403) {
+                    console.log('Logout after invalid session');
+                } else {
+                    this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
+                    console.log(err);
+                }
             });
     }
 

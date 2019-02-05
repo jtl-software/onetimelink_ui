@@ -127,8 +127,12 @@ export default class CreateLink extends Component {
                 }
             })
             .catch((err) => {
-                this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
-                console.log(err);
+                if (err.response && err.response.status === 403) {
+                    console.log('Logout after invalid session');
+                } else {
+                    this.props.showError((<FormattedMessage id="app.CreateLink.ApiError"/>));
+                    console.log(err);
+                }
             });
     }
 
