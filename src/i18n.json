@@ -1,6 +1,8 @@
 {
     "en": {
         "app.Error": "Error",
+        "app.Error.MessageBoxText": "An error has occurred. If you are going to contact support please provide the Request ID.",
+        "app.Error.ErrorMessage": "Error message: ",
         "app.Session.Logout": "Logout",
         "app.CreateLink.Label.Create": "Create link",
         "app.CreateLink.Label.Send": "Send data",
@@ -105,6 +107,8 @@
     },
     "de": {
         "app.Error": "Fehler",
+        "app.Error.MessageBoxText": "Ein Fehler ist aufgetreten! Sollten Sie den Support kontaktieren geben Sie bitte immer die Request ID an.",
+        "app.Error.ErrorMessage": "Fehlermeldung: ",
         "app.Session.Logout": "Abmelden",
         "app.CreateLink.Label.Create": "Link erstellen",
         "app.CreateLink.Label.Send": "Daten absenden",
