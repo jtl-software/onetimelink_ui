@@ -168,10 +168,12 @@ export default class App extends Component {
                 if (err.response.status === 401) {
                     this.showError('HTTP Error 401 Unauthorized.');
                 } else {
-                    this.showError('Uncaught Error.\n' + err.response.statusText);
+                    this.showError(err.response.statusText, err.response.data.request_id);
                 }
             });
     }
+
+
 
     transformTagsForRequest(tags) {
         let tagsToSend = [];
@@ -199,7 +201,7 @@ export default class App extends Component {
                 if (err.response.status === 401) {
                     this.showError('HTTP Error 401 Unauthorized.');
                 } else {
-                    this.showError('Uncaught Error.\n' + err.response.statusText);
+                    this.showError(err.response.statusText, err.response.data.request_id);
                 }
             });
     }
@@ -217,14 +219,17 @@ export default class App extends Component {
         });
     }
 
-    showError(text){
+    showError(text, requestId = ""){
         this.setState({
             error: {
                 shown: true,
                 title: (<FormattedMessage id="app.Error"/>),
                 text: text,
+                requestId: requestId
             },
         });
+
+        console.log(`RequestID: ${requestId}`);
     }
 
     render() {
@@ -235,7 +240,11 @@ export default class App extends Component {
                         <h5 className="modal-title">{this.state.error.title}</h5>
                     </div>
                     <div className="modal-body">
-                        <p>{this.state.error.text}</p>
+                        <p><FormattedMessage id="app.Error.MessageBoxText"/></p>
+                        <p>
+                            <b><FormattedMessage id="app.Error.ErrorMessage"/></b>{this.state.error.text}<br/>
+                            <b>Request ID:</b> {this.state.error.requestId}
+                        </p>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={this.hideError}>
