@@ -31,7 +31,7 @@ export default class OneTimeLink extends React.Component {
     render() {
         if (this.state.sessionToken !== undefined) {
             return (
-                <a id="otllink" target="_blank"
+                <a id="otllink" target="_blank" rel="noopener noreferrer"
                    href={this.state.url + this.state.sessionToken}
                    onClick={this.props.onClick.bind(this)}
                 >{this.state.text}</a>
